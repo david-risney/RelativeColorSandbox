@@ -1,0 +1,131 @@
+<html>
+    <head>
+        <title>Relative Color Sandbox</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+        <style>
+            .borderless, html, body {
+                margin: 0;
+                padding: 0;
+                border: 0;
+            }
+
+            body {
+                font-family: sans-serif;
+                background-color: #f4f4f4;
+            }
+
+            td {
+                width: 100px;
+                height: 100px;
+            }
+
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/baseline-status@1/baseline-status.min.js" type="module"></script>
+    </head>
+    <body>
+        <header>
+            <h1>Relative Color Sandbox</h1>
+            <baseline-status featureId="relative-color"></baseline-status>
+        </header>
+        <main>
+            <div id="colorTableContainer">
+            </div>
+            <button id="addSourceColorButton">+</button>
+        </main>
+        <script>
+// This sets up a table for visualizing relative color CSS.
+let sourceColors = ['rgb(0, 200, 0)'];
+let relativeColors = ['hsl(from <color> h 0 l)', 'lch(from <color> calc(l + 20) c h)', 'lch(from <color> calc(l - 20) c h)', 'hsl(from <color> calc(h + 180) s l)'];
+
+function addRelativeColor(style) {
+    relativeColors.push(style);
+    dataToHtml();
+}
+
+function addSourceColor(color) {
+    sourceColors.push(color);
+    dataToHtml();
+}
+document.getElementById('addSourceColorButton').addEventListener('click', () => {
+    const color = prompt("Enter a source color (e.g. 'red' or '#ff0000' or 'rgb(255,0,0)'):");
+    if (color) {
+        addSourceColor(color);
+    }
+});
+
+function dataToHtml() {
+    if (sourceColors.length == 0 || relativeColors.length == 0) {
+        return;
+    }
+    const colorTableContainer = document.getElementById('colorTableContainer');
+    colorTableContainer.innerHTML = "";
+    const table = document.createElement('table');
+    colorTableContainer.appendChild(table);
+
+    for (var rowIdx = 0; rowIdx < sourceColors.length + 1; ++rowIdx) {
+        const tr = document.createElement('tr');
+        table.appendChild(tr);
+        for (var colIdx = 0; colIdx < relativeColors.length + 2; ++colIdx) {
+            const td = document.createElement('td');
+            tr.appendChild(td);
+
+            if (colIdx == relativeColors.length + 1) {
+                if (rowIdx == 0) {
+                    td.textContent = "+";
+                    td.addEventListener('click', () => {
+                        const style = prompt("Enter a new relative color style", 'hsl(from <color> h calc(s - 10%) l)');
+                        if (style) {
+                            addRelativeColor(style);
+                        }
+                    });
+                }
+            } else {
+                const sourceColor = sourceColors[rowIdx - 1];
+                const relativeColor = relativeColors[colIdx - 1];
+
+                if (rowIdx == 0) {
+                    if (colIdx == 0) {
+                        // td.textContent = "Source \\ Relative";
+                    } else {
+                        td.textContent = relativeColor;
+                        td.addEventListener('click', ((curColIdx) => {
+                            const newStyle = prompt("Enter a new relative color style", relativeColor);
+                            if (newStyle) {
+                                relativeColors[curColIdx - 1] = newStyle;
+                                dataToHtml();
+                            }
+                        }).bind(this, colIdx));
+                    }
+                } else {
+                    if (colIdx == 0) {
+                        td.style.backgroundColor = sourceColor;
+                        td.textContent = sourceColor;
+                        td.addEventListener('click', ((curRowIdx) => {
+                            const newColor = prompt("Enter a source color", sourceColor);
+                            if (newColor) {
+                                sourceColors[curRowIdx - 1] = newColor;
+                                dataToHtml();
+                            }
+                        }).bind(this, rowIdx));
+                    } else {
+                        td.style.backgroundColor = relativeColor.replace("<color>", sourceColor);
+                        td.addEventListener('click', ((curColIdx) => {
+                            const newStyle = prompt("Enter a new relative color style", relativeColor);
+                            if (newStyle) {
+                                relativeColors[curColIdx - 1] = newStyle;
+                                dataToHtml();
+                            }
+                        }).bind(this, colIdx));
+                    }
+                }
+            }
+        }
+    }
+}
+
+dataToHtml();
+        </script>
+    </body>
+</html>
