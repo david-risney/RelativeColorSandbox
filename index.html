@@ -16,10 +16,27 @@
                 background-color: #f4f4f4;
             }
 
-            td {
-                width: 100px;
-                height: 100px;
+            @media screen and (max-width: 810px) {
+                body {
+                    margin-left: 0;
+                    margin-right: 0;
+                }
+                td {
+                    width: 80px;
+                    height: 80px;
+                }
             }
+            @media screen and (min-width: 811px) {
+                body {
+                    margin-left: 10em;
+                    margin-right: 10em;
+                }
+                td {
+                    width: 100px;
+                    height: 100px;
+                }
+            }
+
 
         </style>
         <script src="https://cdn.jsdelivr.net/npm/baseline-status@1/baseline-status.min.js" type="module"></script>
@@ -36,7 +53,7 @@
         </main>
         <script>
 // This sets up a table for visualizing relative color CSS.
-let sourceColors = ['rgb(0, 200, 0)'];
+let sourceColors = ['rgb(0, 255, 0)', 'rgb(0, 128, 220)', 'rgb(100, 0, 100)', 'rgb(200, 0, 0)', 'rgb(255, 255, 255)'];
 let relativeColors = ['hsl(from <color> h 0 l)', 'lch(from <color> calc(l + 20) c h)', 'lch(from <color> calc(l - 20) c h)', 'hsl(from <color> calc(h + 180) s l)'];
 
 function addRelativeColor(style) {
